@@ -258,7 +258,7 @@ public class ClientesTest {
 			clientes.insertar(cliente1);
 			clientes.borrar(cliente1);
 			assertEquals(0, clientes.getTamano(), TAMANO_NO_ESPERADO);
-			assertEquals(null, clientes.buscar(cliente1), CLIENTE_NO_ESPERADO);
+			assertEquals(null, clientes.buscar(cliente1), CLIENTE_NO_ESPERADO); 
 		} catch (Exception e) {
 			fail(EXCEPCION_NO_PROCEDE);
 		}
@@ -266,8 +266,11 @@ public class ClientesTest {
 		clientes = new Clientes(5);
 		try {
 			clientes.insertar(cliente1);
+			System.out.println(clientes.getTamano());
 			clientes.insertar(cliente2);
+			System.out.println(clientes.getTamano());
 			clientes.borrar(cliente1);
+			System.out.println(clientes.getTamano());
 			assertEquals(1, clientes.getTamano(), TAMANO_NO_ESPERADO);
 			assertEquals(cliente2, clientes.buscar(cliente2), CLIENTE_NO_ESPERADO);
 			assertEquals(null, clientes.buscar(cliente1), CLIENTE_NO_ESPERADO);

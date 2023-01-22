@@ -7,8 +7,17 @@ import org.iesalandalus.programacion.clientesempresa.modelo.dominio.Cliente;
 public class Clientes {
 
 	private Cliente[] coleccionClientes;
-	private int capacidad = coleccionClientes.length;
+	private int capacidad;
 	private int tamano;
+
+	public Clientes(int capacidad) {
+		if (capacidad<=0) {
+			throw new IllegalArgumentException("ERROR: La capacidad debe ser mayor que cero.");
+		}
+		this.coleccionClientes = new Cliente[capacidad];
+		this.capacidad = capacidad;
+		this.tamano = 0;
+	}
 
 	private boolean capacidadSuperada(int indice) {
 
@@ -28,7 +37,7 @@ public class Clientes {
 
 	private int buscarIndice(Cliente cliente) {
 
-		int indice = tamano + 1;
+		int indice = this.tamano + 1;
 		boolean estaCliente = false;
 
 		for (int i = 0; i < coleccionClientes.length && !estaCliente; i++) {
@@ -44,16 +53,23 @@ public class Clientes {
 
 	public void insertar(Cliente cliente) throws OperationNotSupportedException {
 		if (cliente == null)
-			throw new NullPointerException("ERROR: Musiquita de anuncio.");
-
-		if (tamano == capacidad)
-			throw new OperationNotSupportedException("ERROR: Maxima capacidad alcanzada.");
+			throw new NullPointerException("ERROR: No se puede insertar un cliente nulo.");
+		
+		if (buscarIndice(cliente)!=this.tamano+1) {
+			throw new OperationNotSupportedException("ERROR: Ya existe un cliente con ese dni.");
+		}
+		
+		if (this.capacidadSuperada(buscarIndice(cliente)))
+			throw new OperationNotSupportedException("ERROR: No se aceptan más clientes.");
+		
+		//if (this.tamano == this.capacidad)
+		//	throw new OperationNotSupportedException("ERROR: Maxima capacidad alcanzada.");
 
 		Cliente clienteCopia = new Cliente(cliente);
 		boolean esNulo = false;
 		for (int i = 0; i < capacidad && !esNulo; i++) {
 			if (coleccionClientes[i] == null) {
-				tamano = i;
+				this.tamano = i+1;
 				esNulo = true;
 				coleccionClientes[i] = clienteCopia;
 			}
@@ -62,14 +78,15 @@ public class Clientes {
 	}
 
 	public Cliente buscar(Cliente cliente) {
-		if (cliente == null)
-			throw new NullPointerException("ERROR: Musiquita de anuncio.");
+		if (cliente == null) {
+			throw new NullPointerException("ERROR: No se puede buscar un cliente nulo.");
+		}
 
 		boolean estaCliente = false;
 		Cliente buscaCliente = null;
 
 		for (int i = 0; i < coleccionClientes.length && !estaCliente; i++) {
-			if (coleccionClientes[i].equals(cliente)) {
+			if (coleccionClientes[i] != null && coleccionClientes[i].equals(cliente)) {
 				buscaCliente = new Cliente(coleccionClientes[i]);
 				estaCliente = true;
 			}
@@ -77,34 +94,40 @@ public class Clientes {
 
 		return buscaCliente;
 	}
+
 	private void desplazarUnaPosicionHaciaIzquierda(int indice) {
 		
+		this.tamano = indice;
+
+		for (int i = indice+1; i <= this.coleccionClientes.length && this.coleccionClientes[i] != null; i++) {
+			this.coleccionClientes[i - 1] = this.coleccionClientes[i];
+			this.coleccionClientes[i] = null;
+			this.tamano = i;
 		
-		
-		for (int i = indice++; i <= coleccionClientes.length && coleccionClientes[i] != null; i++) 
-        {
-			coleccionClientes[i-1] = coleccionClientes[i];
-			coleccionClientes[i] = null;
-        }
-		
-	}
-	
-	public void borrar(Cliente cliente) throws OperationNotSupportedException {
-		
-		int indiceCliente = buscarIndice(cliente);
-		
-		if (indiceCliente==tamano+1)
-		 throw new OperationNotSupportedException("ERROR: Me quiero morir por favor.");
-		
-		else {
-			
-			coleccionClientes[indiceCliente]=null;
-			desplazarUnaPosicionHaciaIzquierda(indiceCliente);
 			
 		}
-			
+
 	}
-	
+
+	public void borrar(Cliente cliente) throws OperationNotSupportedException {
+		if (cliente == null) {
+			throw new NullPointerException("ERROR: No se puede borrar un cliente nulo.");
+		}
+		int indiceCliente = buscarIndice(cliente);
+
+		if (indiceCliente == this.tamano + 1) {
+			throw new OperationNotSupportedException("ERROR: No existe ningún cliente como el indicado.");
+		}
+
+		else {
+
+			coleccionClientes[indiceCliente] = null;
+			desplazarUnaPosicionHaciaIzquierda(indiceCliente);
+
+		}
+
+	}
+
 	public int getCapacidad() {
 		return capacidad;
 	}
@@ -115,13 +138,13 @@ public class Clientes {
 
 	public Cliente[] get() {
 		Cliente[] coleccionTemporal = new Cliente[capacidad];
-		for (int i=0; i < capacidad; i++) {
-			if (coleccionClientes[i] !=null) {
+		for (int i = 0; i < capacidad; i++) {
+			if (coleccionClientes[i] != null) {
 				coleccionTemporal[i] = new Cliente(coleccionClientes[i]);
 			}
-			
+
 		}
-		
+
 		return coleccionTemporal;
 	}
 
