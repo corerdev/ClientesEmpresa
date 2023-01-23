@@ -1,6 +1,6 @@
 package org.iesalandalus.programacion.clientesempresa.modelo.dominio;
 
-import java.util.regex.Pattern;
+import java.util.regex.Pattern; 
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.time.LocalDate;
